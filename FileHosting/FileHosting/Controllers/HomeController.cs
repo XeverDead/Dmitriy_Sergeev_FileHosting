@@ -12,12 +12,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using DAL.DataProviders;
+using DAL;
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
-        private IDataProvider _dataProvider;
+        private readonly IDbDataProvider _dataProvider;
 
         public HomeController()
         {
@@ -39,7 +40,7 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult Register(User user)
         {
-            _dataProvider.SetUser(user, true);
+            _dataProvider.ExecuteNonQuery(SqlQueries.InsertUser, DAL.Enums.Tables.Users, user);
 
             return RedirectToAction("index");
         }
@@ -47,7 +48,14 @@ namespace Web.Controllers
         [NonAction]
         private IEnumerable<User> GetUsers()
         {
-            return _dataProvider.GetUsers();
+            var users = new List<User>();
+
+            foreach (User user in _dataProvider.ExecuteQuery(SqlQueries.GetAllUsers, DAL.Enums.Tables.Users))
+            {
+                users.Add(user);
+            }
+
+            return users;
         }
     }
 }

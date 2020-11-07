@@ -1,18 +1,10 @@
-﻿using System;
+﻿using DAL.Enums;
+using System;
 using System.Linq;
-using LinqToDB.Mapping;
 
 namespace DAL.Models
 {
-    public enum Roles
-    {
-        Guest,
-        User,
-        Editor,
-        Admin
-    }
-
-    public class User
+    public class User : IHostingEntity
     {
         public ulong Id { get; set; }
         public string Login { get; set; }

@@ -1,10 +1,6 @@
-﻿using LinqToDB;
-using LinqToDB.Mapping;
-using System;
-
-namespace DAL.Models
+﻿namespace DAL.Models
 {
-    public class HostingFile
+    public class HostingFile : IHostingEntity
     {
         public ulong Id { get; set; }
         public string Name { get; set; }
