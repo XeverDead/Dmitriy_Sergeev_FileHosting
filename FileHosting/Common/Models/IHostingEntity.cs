@@ -1,4 +1,4 @@
-﻿namespace DAL.Models
+﻿namespace Common.Models
 {
     public interface IHostingEntity
     {

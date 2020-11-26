@@ -2,9 +2,9 @@
 using Common.Models;
 using System.Collections.Generic;
 
-namespace DAL.DataProviders
+namespace BL
 {
-    public interface IDbDataProvider
+    public interface IHostingCore
     {
         List<IHostingEntity> ExecuteQuery(string expression, Tables table, bool isStoredProcedure);
 
