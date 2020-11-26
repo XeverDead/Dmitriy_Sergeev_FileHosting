@@ -1,12 +1,31 @@
-﻿@{
-    ViewData["Title"] = "index";
-    Layout = "Layout";
+﻿@{ 
+    Layout = "_Layout";
 }
 
-<h1>Index</h1>
-<form action="/home/somepage">
-    <a href="/home/somepage"><button type="button" class="btn btn-primary">To somepage</button></a>
+@model IEnumerable<DAL.Models.User>
+
+<h2>Users:</h2>
+<br />
+
+<form action="Home/Register">
+    <input type="submit" value="Register new user" />
 </form>
 
-
+    <table>
+        <tr>
+            <td>Id</td>
+            <td>Email</td>
+            <td>Login</td>
+        </tr>
+        @{ 
+            foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Email</td>
+                    <td>@user.Login</td>
+                </tr>
+            }
+        }
+    </table>
 
