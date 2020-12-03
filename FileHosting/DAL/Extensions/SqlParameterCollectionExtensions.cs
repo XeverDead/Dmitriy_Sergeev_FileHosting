@@ -1,4 +1,4 @@
-﻿using Common.Enums;
+﻿using DAL.Enums;
 using Common.Models;
 using System.Data.SqlClient;
 
@@ -8,13 +8,15 @@ namespace DAL.Extensions
     {
         public static void AddHostingEntityParameters(this SqlParameterCollection parameterCollection, Tables table, IHostingEntity parameterValues)
         {
-            if (table == Tables.Users)
+            switch (table)
             {
-                AddUserParameters(parameterCollection, parameterValues);
-            }
-            else if (table == Tables.Files)
-            {
-                AddHostingFileParameters(parameterCollection, parameterValues);
+                case Tables.Users:
+                    AddUserParameters(parameterCollection, parameterValues);
+                    break;
+
+                case Tables.Files:
+                    AddHostingFileParameters(parameterCollection, parameterValues);
+                    break;
             }
         }
 

@@ -1,13 +1,16 @@
-﻿using Common.Enums;
+﻿using DAL.Enums;
 using Common.Models;
+using DAL.DbExpressions;
 using System.Collections.Generic;
 
 namespace DAL.DataProviders
 {
     public interface IDbDataProvider
     {
-        List<IHostingEntity> ExecuteQuery(string expression, Tables table, bool isStoredProcedure);
+        IDbExpressions Expressions { get; }
 
-        void ExecuteNonQuery(string expression, Tables table, IHostingEntity parameterValues, bool isStoredProcedure);
+        IEnumerable<IHostingEntity> ExecuteQuery(string expression, Tables table);
+
+        void ExecuteNonQuery(string expression, Tables table, IHostingEntity parameterValues);
     }
 }

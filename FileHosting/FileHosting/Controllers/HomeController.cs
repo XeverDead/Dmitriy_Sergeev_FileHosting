@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using Common.Enums;
-using Common.SqlExpressions;
+using DAL.Enums;
+using DAL.DbExpressions;
 using Web.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -53,15 +54,15 @@ namespace Web.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public IActionResult Login(LoginModel loginData)
+        public IActionResult Login(LoginModel loginModel)
         {
             if (ModelState.IsValid)
             {
-                var user = GetUserByEmail(loginData.Email);
+                var user = GetUserByEmail(loginModel.Email);
 
                 if (user != null)
                 {
-                    if (loginData.Password.Equals(user.Password))
+                    if (loginModel.Password.Equals(user.Password))
                     {
                         Authenticate(user);
 
@@ -76,7 +77,7 @@ namespace Web.Controllers
                 }
             }
 
-            return View(loginData);
+            return View(loginModel);
         }
 
         [HttpGet]
@@ -87,23 +88,23 @@ namespace Web.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public IActionResult Register(RegisterModel registerData)
+        public IActionResult Register(RegisterModel registerModel)
         {
             if (ModelState.IsValid)
             {
-                var user = GetUserByEmail(registerData.Email);
+                var user = GetUserByEmail(registerModel.Email);
 
                 if (user == null)
                 {
                     user = new User
                     {
-                        Email = registerData.Email,
-                        Login = registerData.Login,
-                        Password = registerData.Password,
+                        Email = registerModel.Email,
+                        Login = registerModel.Login,
+                        Password = registerModel.Password,
                         Role = Roles.User
                     };
 
-                    _hostingCore.ExecuteNonQuery(SqlStoredProcedures.InsertUser, Tables.Users, user, true);
+                    _hostingCore.InsertUser(user);
 
                     Authenticate(user);
 
@@ -113,7 +114,7 @@ namespace Web.Controllers
                 ModelState.AddModelError("", "Entered email is already used");
             }
 
-            return View(registerData);
+            return View(registerModel);
         }
 
         [NonAction]
@@ -140,29 +141,13 @@ namespace Web.Controllers
         [NonAction]
         private IEnumerable<User> GetUsers()
         {
-            var users = new List<User>();
-
-            foreach (User user in _hostingCore.ExecuteQuery(SqlQueries.GetAllUsers, Tables.Users, false))
-            {
-                users.Add(user);
-            }
-
-            return users;
+            return _hostingCore.GetAllUsers();
         }
 
         [NonAction]
         private User GetUserByEmail(string email)
         {
-            User user = null;
-
-            List<IHostingEntity> users = _hostingCore.ExecuteQuery(SqlQueries.GetUserByEmail(email), Tables.Users, false);
-
-            if (users?.Count > 0)
-            {
-                user =  (User)users[0];
-            }
-
-            return user;
+            return _hostingCore.GetUserByEmail(email);
         }
     }
 }
