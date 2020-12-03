@@ -1,16 +1,21 @@
-﻿using DAL.Enums;
+﻿using Common.Enums;
 using System;
 using System.Linq;
 
-namespace DAL.Models
+namespace Common.Models
 {
     public class User : IHostingEntity
     {
-        public ulong Id { get; set; }
+        public long Id { get; set; }
+
         public string Login { get; set; }
+
         public string Password { get; set; }
+
         public string Email { get; set; }
+
         public Roles Role { get; set; }  
+
         public string RoleName
         {
             get => Role.ToString();

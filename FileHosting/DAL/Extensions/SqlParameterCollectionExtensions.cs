@@ -1,0 +1,43 @@
+﻿using Common.Enums;
+using Common.Models;
+using System.Data.SqlClient;
+
+namespace DAL.Extensions
+{
+    public static class SqlParameterCollectionExtensions
+    {
+        public static void AddHostingEntityParameters(this SqlParameterCollection parameterCollection, Tables table, IHostingEntity parameterValues)
+        {
+            if (table == Tables.Users)
+            {
+                AddUserParameters(parameterCollection, parameterValues);
+            }
+            else if (table == Tables.Files)
+            {
+                AddHostingFileParameters(parameterCollection, parameterValues);
+            }
+        }
+
+        private static void AddUserParameters(SqlParameterCollection parameterCollection, IHostingEntity parameterValues)
+        {
+            var userValues = (User)parameterValues;
+
+            parameterCollection.AddWithValue("@login", userValues.Login);
+            parameterCollection.AddWithValue("@password", userValues.Password);
+            parameterCollection.AddWithValue("@email", userValues.Email);
+            parameterCollection.AddWithValue("@role", userValues.RoleName);
+        }
+
+        private static void AddHostingFileParameters(SqlParameterCollection parameterCollection, IHostingEntity parameterValues)
+        {
+            var fileValues = (HostingFile)parameterValues;
+
+            parameterCollection.AddWithValue("@name", fileValues.Name);
+            parameterCollection.AddWithValue("@size", fileValues.Size);
+            parameterCollection.AddWithValue("@authorId", fileValues.AuthorId);
+            parameterCollection.AddWithValue("@description", fileValues.Description);
+            parameterCollection.AddWithValue("@category", fileValues.Category);
+            parameterCollection.AddWithValue("@link", fileValues.Link);
+        }
+    }
+}

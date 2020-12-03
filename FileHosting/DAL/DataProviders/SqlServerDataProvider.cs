@@ -1,6 +1,6 @@
-﻿using DAL.Enums;
+﻿using Common.Enums;
 using DAL.Extensions;
-using DAL.Models;
+using Common.Models;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -12,24 +12,38 @@ namespace DAL.DataProviders
 
         public SqlServerDataProvider()
         {
-            _connection = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True");
+            _connection = new SqlConnection()
+            {
+                ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True"
+            };
         }
 
-        public List<IHostingEntity> ExecuteQuery(string query, Tables table)
+        public List<IHostingEntity> ExecuteQuery(string expression, Tables table, bool isStoredProcedure)
         {
+            //Иногда каким-то образом строка подключения испаряется при вызове методов
+            _connection.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True";
+
             var entities = new List<IHostingEntity>();
 
             using (_connection)
             {
                 _connection.Open();
 
-                var command = new SqlCommand(query, _connection);
+                var command = new SqlCommand(expression, _connection);
+
+                if (isStoredProcedure)
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                }
 
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    while (reader.Read())
+                    if (reader.HasRows)
                     {
-                        entities.Add(reader.GetHostingEntity(table));
+                        while (reader.Read())
+                        {
+                            entities.Add(reader.GetHostingEntity(table));
+                        }
                     }
                 }
             }
@@ -37,13 +51,21 @@ namespace DAL.DataProviders
             return entities;
         }
 
-        public void ExecuteNonQuery(string query, Tables table, IHostingEntity parameterValues)
+        public void ExecuteNonQuery(string expression, Tables table, IHostingEntity parameterValues, bool isStoredProcedure)
         {
+            //Иногда каким-то образом строка подключения испаряется при вызове методов
+            _connection.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True";
+
             using (_connection)
             {
                 _connection.Open();
 
-                var command = new SqlCommand(query, _connection);
+                var command = new SqlCommand(expression, _connection);
+
+                if (isStoredProcedure)
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                }
 
                 command.Parameters.AddHostingEntityParameters(table, parameterValues);
 
