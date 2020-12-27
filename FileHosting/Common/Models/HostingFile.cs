@@ -6,9 +6,9 @@
 
         public string Name { get; set; }
 
-        public ulong Size { get; set; }
+        public long Size { get; set; }
 
-        public ulong AuthorId { get; set; }
+        public long AuthorId { get; set; }
 
         public string Description { get; set; }
 

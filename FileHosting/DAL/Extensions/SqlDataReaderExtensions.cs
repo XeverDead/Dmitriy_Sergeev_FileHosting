@@ -45,8 +45,8 @@ namespace DAL.Extensions
             {
                 Id = reader.GetInt64("Id"),
                 Name = reader.GetString("Name"),
-                Size = (ulong)reader.GetInt64("Size"),
-                AuthorId = (ulong)reader.GetInt64("AuthorId"),
+                Size = reader.GetInt64("Size"),
+                AuthorId = reader.GetInt64("AuthorId"),
                 Description = reader.GetString("Description"),
                 Category = reader.GetString("Category"),
                 Link = reader.GetString("Link")

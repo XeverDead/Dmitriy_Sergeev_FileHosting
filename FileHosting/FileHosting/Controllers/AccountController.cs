@@ -21,29 +21,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using BL;
 
+
 namespace Web.Controllers
 {
-    public class HomeController : Controller
+    public class AccountController : Controller
     {
         private readonly IHostingCore _hostingCore;
 
-        public HomeController(IHostingCore hostingCore)
+        public AccountController(IHostingCore hostingCore)
         {
             _hostingCore = hostingCore;
-        }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View(GetUsers());
-        }
-
-        [HttpGet]
-        [RoleAuthorize(Roles.Guest)]
-        public IActionResult Secret()
-        {
-            return Content("Well hello there");
         }
 
         [HttpGet]
@@ -53,12 +40,11 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public IActionResult Login(LoginModel loginModel)
         {
             if (ModelState.IsValid)
             {
-                var user = GetUserByEmail(loginModel.Email);
+                var user = _hostingCore.GetUserByEmail(loginModel.Email);
 
                 if (user != null)
                 {
@@ -66,7 +52,7 @@ namespace Web.Controllers
                     {
                         Authenticate(user);
 
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", "Hosting");
                     }
 
                     ModelState.AddModelError("", "Entered password is wrong");
@@ -87,12 +73,11 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public IActionResult Register(RegisterModel registerModel)
         {
             if (ModelState.IsValid)
             {
-                var user = GetUserByEmail(registerModel.Email);
+                var user = _hostingCore.GetUserByEmail(registerModel.Email);
 
                 if (user == null)
                 {
@@ -108,7 +93,7 @@ namespace Web.Controllers
 
                     Authenticate(user);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Hosting");
                 }
 
                 ModelState.AddModelError("", "Entered email is already used");
@@ -132,22 +117,10 @@ namespace Web.Controllers
         }
 
         [NonAction]
-        public IActionResult Logout()
+        private IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
-        }
-
-        [NonAction]
-        private IEnumerable<User> GetUsers()
-        {
-            return _hostingCore.GetAllUsers();
-        }
-
-        [NonAction]
-        private User GetUserByEmail(string email)
-        {
-            return _hostingCore.GetUserByEmail(email);
         }
     }
 }

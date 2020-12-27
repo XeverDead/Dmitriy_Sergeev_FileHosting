@@ -27,58 +27,58 @@ namespace BL
 
         public IEnumerable<HostingFile> GetAllFiles()
         {
-            return (IEnumerable<HostingFile>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetAllFiles, Tables.Files);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetAllFiles, Tables.Files).Cast<HostingFile>();
         }
 
         public IEnumerable<User> GetAllUsers()
         {
-            return (IEnumerable<User>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetAllUsers, Tables.Users);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetAllUsers, Tables.Users).Cast<User>();
         }
 
         public HostingFile GetFileById(long id)
         {
-            var files = (IEnumerable<HostingFile>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFileById(id), Tables.Files);
+            var files = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFileById(id), Tables.Files).Cast<HostingFile>();
 
             return files.FirstOrDefault();
         }
 
         public IEnumerable<HostingFile> GetFilesByCategory(string category)
         {
-            return (IEnumerable<HostingFile>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFilesByCategory(category), Tables.Files);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFilesByCategory(category), Tables.Files).Cast<HostingFile>();
         }
 
         public IEnumerable<HostingFile> GetFilesByExtension(string extension)
         {
-            return (IEnumerable<HostingFile>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFilesByExtension(extension), Tables.Files);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFilesByExtension(extension), Tables.Files).Cast<HostingFile>();
         }
 
         public IEnumerable<HostingFile> GetFilesByName(string name)
         {
-            return (IEnumerable<HostingFile>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFilesByName(name), Tables.Files);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFilesByName(name), Tables.Files).Cast<HostingFile>();
         }
 
         public User GetUserByEmail(string email)
         {
-            var users = (IEnumerable<User>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserByEmail(email), Tables.Users);
+            var users = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserByEmail(email), Tables.Users).Cast<User>();
 
             return users.FirstOrDefault();
         }
 
         public User GetUserById(long id)
         {
-            var users = (IEnumerable<User>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserById(id), Tables.Users);
+            var users = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserById(id), Tables.Users).Cast<User>();
 
             return users.FirstOrDefault();
         }
 
         public IEnumerable<HostingFile> GetUserFiles(long userId)
         {
-            return (IEnumerable<HostingFile>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserFiles(userId), Tables.Files);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserFiles(userId), Tables.Files).Cast<HostingFile>();
         }
 
         public IEnumerable<User> GetUsersByLogin(string login)
         {
-            return (IEnumerable<User>)_dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUsersByLogin(login), Tables.Users);
+            return _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUsersByLogin(login), Tables.Users).Cast<User>();
         }
 
         public void InsertFile(HostingFile file)

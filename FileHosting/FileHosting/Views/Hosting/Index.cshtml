@@ -1,0 +1,37 @@
+﻿@{ 
+    Layout = "_Layout";
+}
+
+@model IEnumerable<Common.Models.HostingFile>
+
+<h2>Users:</h2>
+<br />
+
+<form action="Hosting/Register">
+    <input type="submit" value="Register new user" />
+</form>
+
+    <table class="table">
+        <tr>
+            <td>Id</td>
+            <td>AuthorId</td>
+            <td>Name</td>
+            <td>Link</td>
+        </tr>
+        @{ 
+            foreach (var file in Model)
+            {
+                <tr>
+                    <td>@file.Id</td>
+                    <td>@file.AuthorId</td>
+                    <td>@file.Name</td>
+                    <td>@file.Link</td>
+                </tr>
+            }
+        }
+    </table>
+
+<form action="Hosting/LoadFile">
+    <input type = "submit" value = "Push" />
+</form>
+

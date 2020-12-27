@@ -4,13 +4,16 @@ namespace Web.ViewModels
 {
     public class RegisterModel
     {
+        [StringLength(100, ErrorMessage = "Max email size is 100 symbols")]
         [Required(ErrorMessage = "Email is required")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+        [StringLength(100, ErrorMessage = "Max login size is 50 symbols")]
         [Required(ErrorMessage = "Login is required")]
         public string Login { get; set; }
 
+        [StringLength(100, ErrorMessage = "Max password size is 50 symbols")]
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -18,6 +21,6 @@ namespace Web.ViewModels
         [Required(ErrorMessage = "Password must be confirmed")]
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Password is different")]
-        public string PasswordToConfirm { get; set; }
+        public string ConfirmPassword { get; set; }
     }
 }

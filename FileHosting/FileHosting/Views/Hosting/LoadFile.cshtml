@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@await Html.PartialAsync("_Scripts")
+
+@model Web.ViewModels.FileLoadModel
+
+<h2>Upload</h2>
+
+<a href="/Hosting/Index">Back</a>
+
+<form asp-action="LoadFile" asp-controller="Hosting" asp-antiforgery="true" method="post" enctype="multipart/form-data">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div>
+        <div class="form-group">
+            <label asp-for="UploadedFile">File</label><br />
+            <input type="file" asp-for="UploadedFile" />
+            <span asp-validation-for="UploadedFile" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Category">Category</label><br />
+            <input asp-for="Category" />
+            <span asp-validation-for="Category" />
+        </div>
+        <p class="form-group">
+            <label asp-for="Description">Description</label><br />
+            <textarea asp-for="Description"></textarea>
+            <span asp-validation-for="Description" />
+        </p>
+        <div class="form-group">
+            <input type="submit" value="Load" class="btn btn-outline-dark" />
+        </div>
+    </div>
+</form>
