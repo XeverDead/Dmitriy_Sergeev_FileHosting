@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using DAL.DbExpressions;
+using DAL.Enums;
 using DAL.Extensions;
 using Common.Models;
 using System.Collections.Generic;
@@ -10,15 +11,19 @@ namespace DAL.DataProviders
     {
         private readonly SqlConnection _connection;
 
+        public IDbExpressions Expressions { get; }
+
         public SqlServerDataProvider()
         {
+            Expressions = new SqlExpressions();
+
             _connection = new SqlConnection()
             {
                 ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True"
             };
         }
 
-        public List<IHostingEntity> ExecuteQuery(string expression, Tables table, bool isStoredProcedure)
+        public IEnumerable<IHostingEntity> ExecuteQuery(string expression, Tables table)
         {
             //Иногда каким-то образом строка подключения испаряется при вызове методов
             _connection.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True";
@@ -31,7 +36,7 @@ namespace DAL.DataProviders
 
                 var command = new SqlCommand(expression, _connection);
 
-                if (isStoredProcedure)
+                if (expression.StartsWith("sp_"))
                 {
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                 }
@@ -51,7 +56,7 @@ namespace DAL.DataProviders
             return entities;
         }
 
-        public void ExecuteNonQuery(string expression, Tables table, IHostingEntity parameterValues, bool isStoredProcedure)
+        public void ExecuteNonQuery(string expression, Tables table, IHostingEntity parameterValues)
         {
             //Иногда каким-то образом строка подключения испаряется при вызове методов
             _connection.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True";
@@ -62,12 +67,15 @@ namespace DAL.DataProviders
 
                 var command = new SqlCommand(expression, _connection);
 
-                if (isStoredProcedure)
+                if (expression.StartsWith("sp_"))
                 {
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                 }
 
-                command.Parameters.AddHostingEntityParameters(table, parameterValues);
+                if (parameterValues != null)
+                {
+                    command.Parameters.AddHostingEntityParameters(table, parameterValues);
+                }
 
                 command.ExecuteNonQuery();
             }

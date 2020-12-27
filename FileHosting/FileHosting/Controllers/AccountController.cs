@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using Common.Enums;
-using Common.SqlExpressions;
+using DAL.Enums;
+using DAL.DbExpressions;
 using Web.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -20,29 +21,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using BL;
 
+
 namespace Web.Controllers
 {
-    public class HomeController : Controller
+    public class AccountController : Controller
     {
         private readonly IHostingCore _hostingCore;
 
-        public HomeController(IHostingCore hostingCore)
+        public AccountController(IHostingCore hostingCore)
         {
             _hostingCore = hostingCore;
-        }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View(GetUsers());
-        }
-
-        [HttpGet]
-        [RoleAuthorize(Roles.Guest)]
-        public IActionResult Secret()
-        {
-            return Content("Well hello there");
         }
 
         [HttpGet]
@@ -52,20 +40,19 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public IActionResult Login(LoginModel loginData)
+        public IActionResult Login(LoginModel loginModel)
         {
             if (ModelState.IsValid)
             {
-                var user = GetUserByEmail(loginData.Email);
+                var user = _hostingCore.GetUserByEmail(loginModel.Email);
 
                 if (user != null)
                 {
-                    if (loginData.Password.Equals(user.Password))
+                    if (loginModel.Password.Equals(user.Password))
                     {
                         Authenticate(user);
 
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", "Hosting");
                     }
 
                     ModelState.AddModelError("", "Entered password is wrong");
@@ -76,7 +63,7 @@ namespace Web.Controllers
                 }
             }
 
-            return View(loginData);
+            return View(loginModel);
         }
 
         [HttpGet]
@@ -86,34 +73,33 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public IActionResult Register(RegisterModel registerData)
+        public IActionResult Register(RegisterModel registerModel)
         {
             if (ModelState.IsValid)
             {
-                var user = GetUserByEmail(registerData.Email);
+                var user = _hostingCore.GetUserByEmail(registerModel.Email);
 
                 if (user == null)
                 {
                     user = new User
                     {
-                        Email = registerData.Email,
-                        Login = registerData.Login,
-                        Password = registerData.Password,
+                        Email = registerModel.Email,
+                        Login = registerModel.Login,
+                        Password = registerModel.Password,
                         Role = Roles.User
                     };
 
-                    _hostingCore.ExecuteNonQuery(SqlStoredProcedures.InsertUser, Tables.Users, user, true);
+                    _hostingCore.InsertUser(user);
 
                     Authenticate(user);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Hosting");
                 }
 
                 ModelState.AddModelError("", "Entered email is already used");
             }
 
-            return View(registerData);
+            return View(registerModel);
         }
 
         [NonAction]
@@ -131,38 +117,10 @@ namespace Web.Controllers
         }
 
         [NonAction]
-        public IActionResult Logout()
+        private IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
-        }
-
-        [NonAction]
-        private IEnumerable<User> GetUsers()
-        {
-            var users = new List<User>();
-
-            foreach (User user in _hostingCore.ExecuteQuery(SqlQueries.GetAllUsers, Tables.Users, false))
-            {
-                users.Add(user);
-            }
-
-            return users;
-        }
-
-        [NonAction]
-        private User GetUserByEmail(string email)
-        {
-            User user = null;
-
-            List<IHostingEntity> users = _hostingCore.ExecuteQuery(SqlQueries.GetUserByEmail(email), Tables.Users, false);
-
-            if (users?.Count > 0)
-            {
-                user =  (User)users[0];
-            }
-
-            return user;
         }
     }
 }

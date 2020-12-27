@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@await Html.PartialAsync("_Scripts")
+
+@model Web.ViewModels.RegisterModel
+
+<h2>Registration</h2>
+
+<form asp-action="Register" asp-controller="Account" asp-anti-forgery="true" method="post">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div>
+        <div class="form-group">
+            <label asp-for="Email">Email</label><br />
+            <input type="email" asp-for="Email" />
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Login">Login</label><br />
+            <input type="text" asp-for="Login" />
+            <span asp-validation-for="Login"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">Password</label><br />
+            <input type="password" asp-for="Password" />
+            <span asp-validation-for="Password"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">Confirm Password</label><br />
+            <input type="password" asp-for="ConfirmPassword" />
+            <span asp-validation-for="ConfirmPassword"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Register" class="btn btn-outline-dark" />
+        </div>
+    </div>
+</form>

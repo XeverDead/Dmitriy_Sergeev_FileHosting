@@ -1,4 +1,4 @@
-﻿using Common.Enums;
+﻿using DAL.Enums;
 using Common.Models;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,13 +11,15 @@ namespace DAL.Extensions
         {
             IHostingEntity entity = null;
 
-            if (table == Tables.Users)
+            switch(table)
             {
-                entity = GetUser(reader);
-            }
-            else if (table == Tables.Files)
-            {
-                entity = GetHostingFile(reader);
+                case Tables.Users:
+                    entity = GetUser(reader);
+                    break;
+
+                case Tables.Files:
+                    entity = GetHostingFile(reader);
+                    break;
             }
 
             return entity;
@@ -43,8 +45,8 @@ namespace DAL.Extensions
             {
                 Id = reader.GetInt64("Id"),
                 Name = reader.GetString("Name"),
-                Size = (ulong)reader.GetInt64("Size"),
-                AuthorId = (ulong)reader.GetInt64("AuthorId"),
+                Size = reader.GetInt64("Size"),
+                AuthorId = reader.GetInt64("AuthorId"),
                 Description = reader.GetString("Description"),
                 Category = reader.GetString("Category"),
                 Link = reader.GetString("Link")

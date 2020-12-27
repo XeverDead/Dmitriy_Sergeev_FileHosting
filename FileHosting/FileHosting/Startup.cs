@@ -30,8 +30,8 @@ namespace Web
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = new PathString("/Home/Login");
-                    options.AccessDeniedPath = new PathString("/Home/Login");
+                    options.LoginPath = new PathString("/Account/Login");
+                    options.AccessDeniedPath = new PathString("/Account/Login");
                 });
 
             services.AddSingleton<IHostingCore, HostingCore>();
@@ -54,7 +54,7 @@ namespace Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}");
+                    pattern: "{controller=Hosting}/{action=Index}");
             });
         }
     }

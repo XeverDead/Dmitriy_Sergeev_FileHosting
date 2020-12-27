@@ -1,4 +1,4 @@
-﻿namespace Common.Enums
+﻿namespace DAL.Enums
 {
     public enum Tables
     {
