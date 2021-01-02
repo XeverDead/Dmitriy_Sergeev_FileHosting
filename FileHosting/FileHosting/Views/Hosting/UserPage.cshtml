@@ -1,0 +1,71 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@using System.Security.Claims
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model Web.ViewModels.UserFilesModel
+
+<h2>User info</h2>
+<br />
+
+<label>Nickname:</label>
+<br />
+<label>@Model.User.Login</label>
+<br />
+
+<label>Id:</label>
+<br />
+<label>@Model.User.Id</label>
+<br />
+
+<label>Role:</label>
+<br />
+<label>@Model.User.RoleName</label>
+<br />
+
+@{
+    if (User.Identity.Name == Model.User.Email || User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()) ||
+        User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
+    {
+    <form asp-action="ChangeUserInfo" asp-controller="Hosting" asp-route-userId="@Model.User.Id" method="get">
+        <input type="hidden" value="@Model.User.Id" name="userId" />
+        <input type="submit" value="Change user info" />
+    </form>
+    }
+}
+
+<h2>User's files</h2>
+<br />
+
+<table class="table">
+    <tr>
+        <td>Id</td>
+        <td>Name</td>
+        <td>Category</td>
+        <td>Link</td>
+    </tr>
+    @{
+        foreach (var file in Model.Files)
+        {
+            <tr>
+                <td>@file.Id</td>
+                <td>@file.Name</td>
+                <td>@file.Category</td>
+                <td>@Html.ActionLink("File page", "FilePage", "Hosting", new { fileId = file.Id })</td>
+            </tr>
+        }
+    }
+</table>
+
+@{
+    if (User.Identity.Name == Model.User.Email)
+    {
+        <form asp-action="Upload" asp-controller="Files" method="get">
+            <input type="submit" value="Upload" />
+        </form>
+    }
+}
+

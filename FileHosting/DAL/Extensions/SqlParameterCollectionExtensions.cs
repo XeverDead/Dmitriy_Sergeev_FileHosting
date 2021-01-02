@@ -34,6 +34,16 @@ namespace DAL.Extensions
         {
             var fileValues = (HostingFile)parameterValues;
 
+            if (fileValues.Category == null)
+            {
+                fileValues.Category = string.Empty;
+            }
+
+            if (fileValues.Description == null)
+            {
+                fileValues.Description = string.Empty;
+            }
+
             parameterCollection.AddWithValue("@name", fileValues.Name);
             parameterCollection.AddWithValue("@size", fileValues.Size);
             parameterCollection.AddWithValue("@authorId", fileValues.AuthorId);

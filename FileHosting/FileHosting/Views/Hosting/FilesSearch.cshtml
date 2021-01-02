@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model IEnumerable<Web.ViewModels.UserFileModel>
+
+<h2>User search</h2>
+
+<form asp-action="FilesSearch" asp-controller="Hosting" method="get">
+    <label>Choose search type</label><br />
+    <p>
+        <input type="radio" value="@Web.Enums.FilesSearchTypes.ByName" checked name="searchType" />
+        <span>By name</span>
+    </p>
+    <p>
+        <input type="radio" value="@Web.Enums.FilesSearchTypes.ByExtension" name="searchType" />
+        <span>By extension</span>
+    </p>
+    <p>
+        <input type="radio" value="@Web.Enums.FilesSearchTypes.ByCategory" name="searchType" />
+        <span>By category</span>
+    </p>
+    
+    <label>Enter search query</label>
+    <input type="search" name="searchQuery" />
+    <input type="submit" value="Search" />
+</form>
+
+@{
+    if (Model != null)
+    {
+        <table class="table">
+            <tr>
+                <td>Id</td>
+                <td>Name</td>
+                <td>Author</td>
+                <td>Category</td>
+                <td>Description</td>
+                <td>Link</td>
+            </tr>
+            @{
+                foreach (var userFile in Model)
+                {
+                    <tr>
+                        <td>@userFile.File.Id</td>
+                        <td>@userFile.File.Name</td>
+                        <td>@userFile.User.Login</td>
+                        <td>@userFile.File.Category</td>
+                        <td>@userFile.File.Description</td>
+                        <td>@Html.ActionLink("File page", "FilePage", "Hosting", new { fileId = userFile.File.Id })</td>
+                    </tr>
+                }
+            }
+        </table>
+    }
+}

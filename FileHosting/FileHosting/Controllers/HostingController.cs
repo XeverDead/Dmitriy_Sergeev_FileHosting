@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using BL;
 using Web.ViewModels;
+using Web.Enums;
 
 namespace Web.Controllers
 {
@@ -27,88 +28,170 @@ namespace Web.Controllers
     public class HostingController : Controller
     {
         private readonly IHostingCore _hostingCore;
-        private readonly IWebHostEnvironment _appEnvironemt;
+        private readonly IWebHostEnvironment _appEnvironment;
 
-        public HostingController(IHostingCore hostingCore, IWebHostEnvironment appEnviroment)
+        public HostingController(IHostingCore hostingCore, IWebHostEnvironment appEnvironment)
         {
             _hostingCore = hostingCore;
-            _appEnvironemt = appEnviroment;
+            _appEnvironment = appEnvironment;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            return View(_hostingCore.GetAllFiles());
+            return View(_hostingCore.GetAllUsers());
         }
 
         [HttpGet]
-        public IActionResult LoadFile()
+        public IActionResult UserPage(long userId)
+        {         
+            var user = _hostingCore.GetUserById(userId);
+
+            if (user == null)
+            {
+                return Content("There is no user with this id");
+            }
+
+            var userFiles = new UserFilesModel
+            {
+                User = user,
+                Files = _hostingCore.GetUserFiles(userId)
+            };
+
+            return View(userFiles);
+        }
+
+        [HttpGet]
+        public IActionResult FilePage(long fileId)
         {
-            return View();
+            var file = _hostingCore.GetFileById(fileId);
+
+            if (file == null)
+            {
+                return Content("There is no file with this id");
+            }
+
+            var userFileInfo = new UserFileModel
+            {
+                File = file,
+                User = _hostingCore.GetUserById(file.AuthorId)
+            };
+
+            return View(userFileInfo);
+        }
+
+        [HttpGet]
+        public IActionResult UsersSearch(string login)
+        {
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                return View();
+            }
+
+            return View(_hostingCore.GetUsersByLogin(login));
+        }
+
+        [HttpGet]
+        public IActionResult FilesSearch(FilesSearchTypes searchType, string searchQuery)
+        {
+            if (string.IsNullOrWhiteSpace(searchQuery))
+            {
+                return View();
+            }
+
+            IEnumerable<UserFileModel> userFileCollection = null;
+
+            switch(searchType)
+            {
+                case FilesSearchTypes.ByName:
+                    userFileCollection = GetUserFileCollection(_hostingCore.GetFilesByName, searchQuery);
+                    break;
+
+                case FilesSearchTypes.ByExtension:
+                    userFileCollection = GetUserFileCollection(_hostingCore.GetFilesByExtension, searchQuery);
+                    break;
+
+                case FilesSearchTypes.ByCategory:
+                    userFileCollection = GetUserFileCollection(_hostingCore.GetFilesByCategory, searchQuery);
+                    break;
+            }
+
+            return View(userFileCollection);
+        }
+
+        [HttpGet]
+        public IActionResult ChangeUserInfo(long userId)
+        {
+            var user = _hostingCore.GetUserById(userId);
+
+            var userInfo = new UserInfoModel
+            {
+                Id = user.Id,
+                Login = user.Login,
+                Role = user.Role
+            };
+
+            return View(userInfo);
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoadFile(FileLoadModel loadModel)
+        public IActionResult ChangeUserInfo(UserInfoModel userInfo)
         {
-            var uploadedFile = loadModel.UploadedFile;
+            var user = _hostingCore.GetUserById(userInfo.Id);
 
-            var user = _hostingCore.GetUserByEmail(User.Identity.Name);
+            user.Login = userInfo.Login;
+            user.Role = userInfo.Role;
 
-            if (user != null && uploadedFile != null)
+            _hostingCore.UpdateUser(user.Id, user);
+
+            return RedirectToAction("UserPage", new { userId = user.Id });
+        }
+
+        [HttpGet]
+        public IActionResult ChangeFileInfo(long fileId)
+        {
+            var file = _hostingCore.GetFileById(fileId);
+
+            var fileInfo = new FileInfoModel
             {
-                if (uploadedFile.FileName.Length > 100)
+                Id = file.Id,
+                Name = file.Name,
+                Category = file.Category,
+                Description = file.Description
+            };
+
+            return View(fileInfo);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeFileInfo(FileInfoModel fileInfo)
+        {
+            var file = _hostingCore.GetFileById(fileInfo.Id);
+
+            file.Name = fileInfo.Name;
+            file.Category = fileInfo.Category;
+            file.Description = fileInfo.Description;
+
+            _hostingCore.UpdateFile(file.Id, file);
+
+            return RedirectToAction("FilePage", new { fileId = file.Id });
+        }
+
+        [NonAction]
+        private IEnumerable<UserFileModel> GetUserFileCollection(Func<string, IEnumerable<HostingFile>> filesSource, string searchQuery)
+        {
+            var userFileCollection = new List<UserFileModel>();
+
+            foreach (var file in filesSource(searchQuery))
+            {
+                userFileCollection.Add(new UserFileModel
                 {
-                    ModelState.AddModelError("", "Max file name length is 100 symbols");
-
-                    return View(loadModel);
-                }
-
-                IEnumerable<HostingFile> userFiles = _hostingCore.GetUserFiles(user.Id);
-
-                var selectedFiles = from userFile in userFiles
-                                    where userFile.Name == uploadedFile.FileName
-                                    select userFile;
-
-                if (selectedFiles?.Count() > 0)
-                {
-                    ModelState.AddModelError("", "You already uploaded a file with this name");
-
-                    return View(loadModel);
-                }
-
-                var path = _appEnvironemt.WebRootPath + $"/Files/{user.Id}/";
-
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                path += uploadedFile.FileName;
-
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    await uploadedFile.CopyToAsync(fileStream);
-                }
-
-                var link = $"Files/{user.Id}/{uploadedFile.FileName}";
-
-                var file = new HostingFile
-                {
-                    AuthorId = user.Id,
-                    Name = uploadedFile.FileName,
-                    Size = uploadedFile.Length,
-                    Category = loadModel.Category,
-                    Description = loadModel.Description,
-                    Link = link
-                };
-
-                _hostingCore.InsertFile(file);
-
-                return RedirectToAction("Index");
+                    File = file,
+                    User = _hostingCore.GetUserById(file.AuthorId)
+                });
             }
 
-            ModelState.AddModelError("", "An error occurred during loading");
-            return View(loadModel);
+            return userFileCollection;
         }
     }
 }

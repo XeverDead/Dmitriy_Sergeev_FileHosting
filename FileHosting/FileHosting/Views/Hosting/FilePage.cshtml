@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@using System.Security.Claims
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model Web.ViewModels.UserFileModel
+
+<h2>File info</h2>
+<br />
+
+<label>Name</label>
+<br />
+<label>@Model.File.Name</label>
+<br />
+
+<label>Author:</label>
+<br />
+<label>@Model.User.Login</label>
+<br />
+
+<label>Category:</label>
+<br />
+<label>@Model.File.Category</label>
+<br />
+
+<label>Description:</label>
+<br />
+<label>@Model.File.Description</label>
+<br />
+
+@Html.ActionLink("Download", "Download", "Files", new { userId = Model.File.AuthorId, fileId = Model.File.Id })
+
+@{
+    if (User.Identity.Name == Model.User.Email || User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()) ||
+        User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
+    {
+        <form method="get" asp-action="ChangeFileInfo" asp-controller="Hosting" asp-route-fileId="@Model.File.Id">
+            <input type="hidden" value="@Model.File.Id" name="fileId" />
+            <input type="submit" value="Change file info" />
+
+            <!-- Если оставить необходимый параметр в скрытом инпуте, то он передастся, а если 
+                оставить его в тег хелпере, то он сгенерит нормальную ссылку
+                но при нажатии на кнопку просто не передаст параметр-->
+        </form>
+    }
+}
