@@ -177,6 +177,35 @@ namespace Web.Controllers
             return RedirectToAction("FilePage", new { fileId = file.Id });
         }
 
+        [HttpGet]
+        public IActionResult DeleteFile(long fileId)
+        {
+            var file = _hostingCore.GetFileById(fileId);
+
+            System.IO.File.Delete(Path.Combine(_appEnvironment.WebRootPath, file.Link));
+            _hostingCore.DeleteFile(fileId);
+
+            return RedirectToAction("UserPage", new { userId = file.AuthorId});
+        }
+
+        [HttpGet]
+        public IActionResult DeleteUser(long userId)
+        {
+            var user = _hostingCore.GetUserById(userId);
+
+            var files = _hostingCore.GetUserFiles(userId);
+
+            foreach (var file in files)
+            {
+                System.IO.File.Delete(Path.Combine(_appEnvironment.WebRootPath, file.Link));
+                _hostingCore.DeleteFile(file.Id);
+            }
+
+            _hostingCore.DeleteUser(user.Id);
+
+            return RedirectToAction("Index");
+        }
+
         [NonAction]
         private IEnumerable<UserFileModel> GetUserFileCollection(Func<string, IEnumerable<HostingFile>> filesSource, string searchQuery)
         {

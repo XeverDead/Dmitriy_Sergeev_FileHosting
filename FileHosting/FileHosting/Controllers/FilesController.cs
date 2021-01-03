@@ -35,12 +35,11 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Download(long userId, long fileId)
+        public VirtualFileResult Download(long fileId)
         {
             var file = _hostingCore.GetFileById(fileId);
 
-            var filePath = Path.Combine("~/Files", userId.ToString(), fileId.ToString());
-            return File(filePath, "application/octet-stream", file.Name);
+            return File(Path.Combine("~", file.Link), "application/octet-stream", file.Name);
         }
 
         [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]

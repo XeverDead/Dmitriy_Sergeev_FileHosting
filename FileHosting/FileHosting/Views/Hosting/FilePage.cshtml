@@ -8,6 +8,22 @@
 
 @model Web.ViewModels.UserFileModel
 
+@{
+    if (User.Identity.Name == Model.User.Email ||
+        User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
+    {
+        <form method="get" asp-action="DeleteFile" asp-controller="Hosting" asp-route-fileId="@Model.File.Id">
+            <input type="hidden" value="@Model.File.Id" name="fileId" />
+            <input type="submit" value="DeleteFile" />
+
+            <!-- Если оставить необходимый параметр в скрытом инпуте, то он передастся, а если
+                оставить его в тег хелпере, то он сгенерит нормальную ссылку
+                но при нажатии на кнопку просто не передаст параметр-->
+        </form>
+    }
+}
+
+
 <h2>File info</h2>
 <br />
 
@@ -31,7 +47,7 @@
 <label>@Model.File.Description</label>
 <br />
 
-@Html.ActionLink("Download", "Download", "Files", new { userId = Model.File.AuthorId, fileId = Model.File.Id })
+@Html.ActionLink("Download", "Download", "Files", new { fileId = Model.File.Id })
 
 @{
     if (User.Identity.Name == Model.User.Email || User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()) ||
@@ -41,7 +57,7 @@
             <input type="hidden" value="@Model.File.Id" name="fileId" />
             <input type="submit" value="Change file info" />
 
-            <!-- Если оставить необходимый параметр в скрытом инпуте, то он передастся, а если 
+            <!-- Если оставить необходимый параметр в скрытом инпуте, то он передастся, а если
                 оставить его в тег хелпере, то он сгенерит нормальную ссылку
                 но при нажатии на кнопку просто не передаст параметр-->
         </form>

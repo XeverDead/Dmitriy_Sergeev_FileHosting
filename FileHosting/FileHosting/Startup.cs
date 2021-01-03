@@ -34,7 +34,8 @@ namespace Web
                     options.AccessDeniedPath = new PathString("/Account/Login");
                 });
 
-            services.AddSingleton<IHostingCore, HostingCore>();
+            services.AddTransient<IHostingCore, HostingCore>();
+            services.AddTransient<IDbDataProvider, SqlServerDataProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,7 +45,6 @@ namespace Web
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthentication();

@@ -4,32 +4,37 @@ using DAL.Extensions;
 using Common.Models;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace DAL.DataProviders
 {
     public class SqlServerDataProvider : IDbDataProvider
     {
         private readonly SqlConnection _connection;
+        private readonly string _connectionString;
 
         public IDbExpressions Expressions { get; }
 
-        public SqlServerDataProvider()
+        public SqlServerDataProvider(IConfiguration configuration)
         {
+            //Насчёт DI для выражений (если я вообще правильно понял суть DI). Дело в том, что для дата провайдеров 
+            //подойдут только их "родные" выражения и никакие другие. Так тут надо опредялять нужный класс выражений
+            //внутри провайдера, а не шде то снаружи, иначе всё может упасть.
             Expressions = new SqlExpressions();
 
-            _connection = new SqlConnection()
-            {
-                ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True"
-            };
+            _connection = new SqlConnection();
+
+            _connectionString = configuration.GetConnectionString("SqlServerConnection");
         }
 
         public IEnumerable<IHostingEntity> ExecuteQuery(string expression, Tables table)
         {
-            //Иногда каким-то образом строка подключения испаряется при вызове методов
-            _connection.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True";
-
             var entities = new List<IHostingEntity>();
 
+            //Проблема со строкой подключения. Если один метод контроллера несколько раз обращается к базе данных,
+            //то новый объект класса провайдера не создаётся, а в старом подключение уже закрыто и строка подключения 
+            //из него убрана. Как это нормально пофиксить - без понятия.
+            _connection.ConnectionString = _connectionString;
             using (_connection)
             {
                 _connection.Open();
@@ -58,9 +63,7 @@ namespace DAL.DataProviders
 
         public void ExecuteNonQuery(string expression, Tables table, IHostingEntity parameterValues)
         {
-            //Иногда каким-то образом строка подключения испаряется при вызове методов
-            _connection.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HostingDb;Trusted_Connection=True";
-
+            _connection.ConnectionString = _connectionString;
             using (_connection)
             {
                 _connection.Open();

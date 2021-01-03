@@ -30,10 +30,20 @@
     if (User.Identity.Name == Model.User.Email || User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()) ||
         User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
     {
-    <form asp-action="ChangeUserInfo" asp-controller="Hosting" asp-route-userId="@Model.User.Id" method="get">
-        <input type="hidden" value="@Model.User.Id" name="userId" />
-        <input type="submit" value="Change user info" />
-    </form>
+        <form asp-action="ChangeUserInfo" asp-controller="Hosting" asp-route-userId="@Model.User.Id" method="get">
+            <input type="hidden" value="@Model.User.Id" name="userId" />
+            <input type="submit" value="Change user info" />
+        </form>
+    }
+}
+
+@{
+    if (User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
+    {
+        <form asp-action="DeleteUser" asp-controller="Hosting" asp-route-userId="@Model.User.Id" method="get">
+            <input type="hidden" value="@Model.User.Id" name="userId" />
+            <input type="submit" value="Delete user" />
+        </form>
     }
 }
 
