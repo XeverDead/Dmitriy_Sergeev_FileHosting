@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@using System.Security.Claims
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@await Html.PartialAsync("_Scripts")
+
+@model Web.ViewModels.UserInfoModel
+
+<h2>Change user info</h2>
+
+<form asp-action="ChangeUserInfo" asp-controller="Hosting" method="post">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div>
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <div class="form-group">
+            <label asp-for="Login">Name</label><br />
+            <input type="text" asp-for="Login" />
+            <span asp-validation-for="Login" />
+        </div>
+        @{
+            if (User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()) ||
+                User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
+            {
+                <div class="form-group">
+                    <label asp-for="Role">Role</label><br />
+                    <select asp-for="Role" asp-items="@Html.GetEnumSelectList<Common.Enums.Roles>()"></select>
+                    <span asp-validation-for="Role" />
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="Role" value="@Model.Role" />
+            }
+        }
+
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-outline-dark" />
+        </div>
+    </div>
+</form>
+<form method="get" asp-action="UserPage" asp-controller="Hosting" asp-route-fileId="@Model.Id">
+    <div class="form-group">
+        <input type="hidden" value="@Model.Id" name="userId" />
+        <input type="submit" value="Cancel" class="btn btn-outline-dark" />
+
+        <!-- Если оставить необходимый параметр в скрытом инпуте, то он передастся, а если
+            оставить его в тег хелпере, то он сгенерит нормальную ссылку
+            но при нажатии на кнопку просто не передаст параметр-->
+    </div>
+</form>
