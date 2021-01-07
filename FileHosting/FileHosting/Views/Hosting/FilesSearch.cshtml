@@ -6,53 +6,56 @@
 
 @model IEnumerable<Web.ViewModels.UserFileModel>
 
-<h2>User search</h2>
-
-<form asp-action="FilesSearch" asp-controller="Hosting" method="get">
-    <label>Choose search type</label><br />
-    <p>
-        <input type="radio" value="@Web.Enums.FilesSearchTypes.ByName" checked name="searchType" />
-        <span>By name</span>
-    </p>
-    <p>
-        <input type="radio" value="@Web.Enums.FilesSearchTypes.ByExtension" name="searchType" />
-        <span>By extension</span>
-    </p>
-    <p>
-        <input type="radio" value="@Web.Enums.FilesSearchTypes.ByCategory" name="searchType" />
-        <span>By category</span>
-    </p>
-    
-    <label>Enter search query</label>
-    <input type="search" name="searchQuery" />
-    <input type="submit" value="Search" />
-</form>
-
-@{
-    if (Model != null)
-    {
-        <table class="table">
-            <tr>
-                <td>Id</td>
-                <td>Name</td>
-                <td>Author</td>
-                <td>Category</td>
-                <td>Description</td>
-                <td>Link</td>
-            </tr>
-            @{
-                foreach (var userFile in Model)
-                {
-                    <tr>
-                        <td>@userFile.File.Id</td>
-                        <td>@userFile.File.Name</td>
-                        <td>@userFile.User.Login</td>
-                        <td>@userFile.File.Category</td>
-                        <td>@userFile.File.Description</td>
-                        <td>@Html.ActionLink("File page", "FilePage", "Hosting", new { fileId = userFile.File.Id })</td>
-                    </tr>
-                }
+<div class="d-grid gap-3">
+    <div>
+        <form asp-action="FilesSearch" asp-controller="Hosting" method="get">
+            <div class="container w-25 d-grid gap-3">
+                <h1 class="text-center">Files search</h1>
+                <div class="form-group">
+                    <label class="form-label">Choose search type</label><br />
+                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByName" checked name="searchType" />
+                    <span>By name</span><br />
+                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByExtension" name="searchType" />
+                    <span>By extension</span><br />
+                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByCategory" name="searchType" />
+                    <span>By category</span><br />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Enter search query</label><br />
+                    <input type="search" name="searchQuery" class="form-control" />
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" value="Search" class="btn btn-outline-dark" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        @{
+            if (Model != null)
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Link</th>
+                        </tr>
+                    </thead>
+                    @{
+                        foreach (var userFile in Model)
+                        {
+                            <tr>
+                                <td>@userFile.File.Name</td>
+                                <td>@userFile.User.Login</td>
+                                <td>@userFile.File.Category</td>
+                                <td>@Html.ActionLink("File page", "FilePage", "Hosting", new { fileId = userFile.File.Id })</td>
+                            </tr>
+                        }
+                    }
+                </table>
             }
-        </table>
-    }
-}
+        }
+    </div>
+</div>

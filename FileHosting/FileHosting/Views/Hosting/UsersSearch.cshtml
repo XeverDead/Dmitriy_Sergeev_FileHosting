@@ -6,35 +6,45 @@
 
 @model IEnumerable<Common.Models.User>
 
-<h2>User search</h2>
-
-<form asp-action="UsersSearch" asp-controller="Hosting" method="get">
-    <label>Enter nickname</label><br />
-    <input type="search" name="login" /><br />
-    <input type="submit" value="Search" />
-</form>
-
-@{
-    if (Model != null)
-    {
-        <table class="table">
-            <tr>
-                <td>Id</td>
-                <td>Nickname</td>
-                <td>Role</td>
-                <td>Link</td>
-            </tr>
-            @{
-                foreach (var user in Model)
-                {
-                    <tr>
-                        <td>@user.Id</td>
-                        <td>@user.Login</td>
-                        <td>@user.RoleName</td>
-                        <td>@Html.ActionLink("Userpage", "UserPage", "Hosting", new { userId = user.Id })</td>
-                    </tr>
-                }
+<div class="d-grid gap-3">
+    <div>
+        <form asp-action="UsersSearch" asp-controller="Hosting" method="get">
+            <div class="container w-25 d-grid  gap-3">
+                <h1 class="text-center">User search</h1>
+                <div class="form-group">
+                    <label class="form-label">Enter nickname</label><br />
+                    <input type="search" name="login" class="form-control" />
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" value="Search" class="btn btn-outline-dark" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        @{
+            if (Model != null)
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nickname</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Link</th>
+                        </tr>
+                    </thead>
+                    @{
+                        foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.Login</td>
+                                <td>@user.RoleName</td>
+                                <td>@Html.ActionLink("Userpage", "UserPage", "Hosting", new { userId = user.Id })</td>
+                            </tr>
+                        }
+                    }
+                </table>
             }
-        </table>
-    }
-}
+        }
+    </div>
+</div>
