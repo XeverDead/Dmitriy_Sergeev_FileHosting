@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = Model.User.Login;
 }
 
 @using System.Security.Claims
@@ -8,6 +9,9 @@
 
 @model Web.ViewModels.UserFilesModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <div class="d-grid gap-3">
     <div class="container w-25 d-grid  gap-3">
         <h1 class="text-center">User info</h1>
@@ -24,14 +28,14 @@
                 if (User.Identity.Name == Model.User.Email || User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()) ||
                     User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
                 {
-                    <a asp-action="ChangeUserInfo" asp-controller="Hosting" asp-route-fileId="@Model.User.Id" class="btn btn-outline-dark">Change user info</a>
+                    <a asp-action="ChangeUserInfo" asp-controller="Hosting" asp-route-userId="@Model.User.Id" class="btn btn-outline-dark">Change user info</a>
                 }
             }
 
             @{
                 if (User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
                 {
-                    <a asp-action="DeleteUser" asp-controller="Hosting" asp-route-fileId="@Model.User.Id" class="btn btn-outline-dark">Delete user</a>
+                    <a asp-action="DeleteUser" asp-controller="Hosting" asp-route-userId="@Model.User.Id" class="btn btn-outline-dark">Delete user</a>
                 }
             }
 

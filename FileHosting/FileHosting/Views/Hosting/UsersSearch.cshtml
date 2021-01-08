@@ -1,11 +1,15 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "User search";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model IEnumerable<Common.Models.User>
+@model Web.ViewModels.UsersSearchModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <div class="d-grid gap-3">
     <div>
         <form asp-action="UsersSearch" asp-controller="Hosting" method="get">
@@ -13,7 +17,7 @@
                 <h1 class="text-center">User search</h1>
                 <div class="form-group">
                     <label class="form-label">Enter nickname</label><br />
-                    <input type="search" name="login" class="form-control" />
+                    <input type="search" asp-for="SearchQuery" class="form-control" />
                 </div>
                 <div class="form-group text-center">
                     <input type="submit" value="Search" class="btn btn-outline-dark" />
@@ -34,7 +38,7 @@
                         </tr>
                     </thead>
                     @{
-                        foreach (var user in Model)
+                        foreach (var user in Model.Users)
                         {
                             <tr>
                                 <td>@user.Login</td>

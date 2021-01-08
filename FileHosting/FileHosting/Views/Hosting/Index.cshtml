@@ -1,11 +1,15 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "Home page";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model IEnumerable<Common.Models.User>
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <div class="container w-25 d-grid gap-3">
     <h1 class="text-center">I do not know, what should be here. So just press some links and buttons on navigation.</h1>
 </div>

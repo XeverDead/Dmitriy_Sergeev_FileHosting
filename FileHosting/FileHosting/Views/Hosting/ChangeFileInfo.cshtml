@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = $"Change {Model.Name} info";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -8,6 +9,9 @@
 
 @model Web.ViewModels.FileInfoModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="ChangeFileInfo" asp-controller="Hosting" method="post">
     <div class="container w-25 d-grid gap-3">
         <h1 class="text-center">Change file info</h1>

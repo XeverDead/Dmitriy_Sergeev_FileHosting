@@ -91,14 +91,20 @@ namespace Web.Controllers
 
         [HttpGet]
         [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]
-        public IActionResult UsersSearch(string login)
+        public IActionResult UsersSearch(string searchQuery)
         {
-            if (string.IsNullOrWhiteSpace(login))
+            if (string.IsNullOrWhiteSpace(searchQuery))
             {
                 return View();
             }
 
-            return View(_hostingCore.GetUsersByLogin(login));
+            var usersSearchModel = new UsersSearchModel
+            {
+                Users = _hostingCore.GetUsersByLogin(searchQuery),
+                SearchQuery = searchQuery
+            };
+
+            return View(usersSearchModel);
         }
 
         [HttpGet]
@@ -126,7 +132,14 @@ namespace Web.Controllers
                     break;
             }
 
-            return View(userFileCollection);
+            var filesSearchModel = new FilesSearchModel
+            {
+                UserFileCollection = userFileCollection,
+                SearchQuery = searchQuery,
+                SearchType = searchType
+            };
+
+            return View(filesSearchModel);
         }
 
         [HttpGet]
@@ -217,7 +230,8 @@ namespace Web.Controllers
                     var userFiles = _hostingCore.GetUserFiles(file.AuthorId);
 
                     var selectedFiles = from userFile in userFiles
-                                        where userFile.Name == fileInfo.Name
+                                        where userFile.Name == fileInfo.Name &&
+                                        userFile.Id != fileInfo.Id
                                         select userFile;
 
                     if (selectedFiles?.Count() > 0)

@@ -1,11 +1,15 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "File search";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model IEnumerable<Web.ViewModels.UserFileModel>
+@model Web.ViewModels.FilesSearchModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <div class="d-grid gap-3">
     <div>
         <form asp-action="FilesSearch" asp-controller="Hosting" method="get">
@@ -13,16 +17,16 @@
                 <h1 class="text-center">Files search</h1>
                 <div class="form-group">
                     <label class="form-label">Choose search type</label><br />
-                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByName" checked name="searchType" />
+                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByName" checked asp-for="SearchType" />
                     <span>By name</span><br />
-                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByExtension" name="searchType" />
+                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByExtension" asp-for="SearchType" />
                     <span>By extension</span><br />
-                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByCategory" name="searchType" />
+                    <input type="radio" value="@Web.Enums.FilesSearchTypes.ByCategory" asp-for="SearchType" />
                     <span>By category</span><br />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Enter search query</label><br />
-                    <input type="search" name="searchQuery" class="form-control" />
+                    <input type="search" asp-for="SearchQuery" class="form-control" />
                 </div>
                 <div class="form-group text-center">
                     <input type="submit" value="Search" class="btn btn-outline-dark" />
@@ -44,7 +48,7 @@
                         </tr>
                     </thead>
                     @{
-                        foreach (var userFile in Model)
+                        foreach (var userFile in Model.UserFileCollection)
                         {
                             <tr>
                                 <td>@userFile.File.Name</td>

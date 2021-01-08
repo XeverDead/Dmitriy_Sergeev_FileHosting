@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "Upload";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -8,6 +9,9 @@
 
 @model Web.ViewModels.FileLoadModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="Upload" asp-controller="Files" asp-antiforgery="true" method="post" enctype="multipart/form-data">
     <div class="container w-25 d-grid gap-3">
         <h1 class="text-center">Upload</h1>

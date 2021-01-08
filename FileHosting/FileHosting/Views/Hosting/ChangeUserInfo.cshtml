@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = $"Change {Model.Login} info";
 }
 
 @using System.Security.Claims
@@ -10,6 +11,9 @@
 
 @model Web.ViewModels.UserInfoModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="ChangeUserInfo" asp-controller="Hosting" method="post">
     <div class="container w-25 d-grid gap-3">
         <h1 class="text-center">Change user info</h1>

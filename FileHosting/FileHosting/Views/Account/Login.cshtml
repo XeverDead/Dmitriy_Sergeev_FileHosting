@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "Sign in";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -8,6 +9,9 @@
 
 @model Web.ViewModels.LoginModel
 
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="Login" asp-controller="Account" asp-antiforgery="true" method="post">
     <div class="container w-25 d-grid gap-3">
         <h1 class="text-center">Login</h1>
