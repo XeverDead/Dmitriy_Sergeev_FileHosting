@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BL;
@@ -43,6 +44,11 @@ namespace Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+
+            if (string.IsNullOrWhiteSpace(env.WebRootPath))
+            {
+                env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             }
 
             app.UseRouting();
