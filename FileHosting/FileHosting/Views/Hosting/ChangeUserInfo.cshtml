@@ -29,7 +29,7 @@
             {
                 <div class="form-group">
                     <label asp-for="Role" class="form-label">Role</label><br />
-                    <select asp-for="Role" asp-items="@Html.GetEnumSelectList<Common.Enums.Roles>()" class="form-control"></select>
+                    <select asp-for="Role" asp-items="@Html.GetEnumSelectList<Common.Enums.Roles>()" class="form-select"></select>
                     <span asp-validation-for="Role" />
                 </div>
             }

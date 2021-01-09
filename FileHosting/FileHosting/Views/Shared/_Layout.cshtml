@@ -13,6 +13,14 @@
                 <a asp-action="Index" asp-controller="Hosting" class="navbar-brand">FileHosting</a>
                 <a class="nav-link link-light" asp-action="FilesSearch" asp-controller="Hosting">Files</a>
                 <a class="nav-link link-light" asp-action="UsersSearch" asp-controller="Hosting">Users</a>
+                @{
+                    if (User.HasClaim(System.Security.Claims.ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()) ||
+                        User.HasClaim(System.Security.Claims.ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Editor.ToString()))
+                    {
+                        <a class="nav-link link-light" asp-action="FileList" asp-controller="Hosting">File list</a>
+                        <a class="nav-link link-light" asp-action="UserList" asp-controller="Hosting">User list</a>
+                    }
+                }
             </div>
             <div class="row align-items-center gx-2">
                 @{

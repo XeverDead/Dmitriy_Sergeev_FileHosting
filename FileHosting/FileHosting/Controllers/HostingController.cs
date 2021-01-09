@@ -42,7 +42,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]
+        [Authorize]
         public IActionResult UserPage(long userId)
         {
             User user;
@@ -255,7 +255,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]
+        [Authorize]
         public IActionResult DeleteFile(long fileId)
         {
             var file = _hostingCore.GetFileById(fileId);
@@ -272,26 +272,36 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]
+        [RoleAuthorize(Roles.Admin)]
         public IActionResult DeleteUser(long userId)
         {
-            if (User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Admin.ToString()))
+            var user = _hostingCore.GetUserById(userId);
+
+            var files = _hostingCore.GetUserFiles(userId);
+
+            foreach (var file in files)
             {
-                var user = _hostingCore.GetUserById(userId);
-
-                var files = _hostingCore.GetUserFiles(userId);
-
-                foreach (var file in files)
-                {
-                    System.IO.File.Delete(Path.Combine(_appEnvironment.WebRootPath, file.Link));
-                    _hostingCore.DeleteFile(file.Id);
-                }
-
-                _hostingCore.DeleteUser(user.Id);
-
+                System.IO.File.Delete(Path.Combine(_appEnvironment.WebRootPath, file.Link));
+                _hostingCore.DeleteFile(file.Id);
             }
 
+            _hostingCore.DeleteUser(user.Id);
+
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [RoleAuthorize(Roles.Editor, Roles.Admin)]
+        public IActionResult UserList()
+        {
+            return View(_hostingCore.GetAllUsers());
+        }
+
+        [HttpGet]
+        [RoleAuthorize(Roles.Editor, Roles.Admin)]
+        public IActionResult FileList()
+        {
+            return View(_hostingCore.GetAllFiles());
         }
 
         [NonAction]

@@ -45,7 +45,7 @@
             if (User.Identity.Name == Model.User.Email ||
                 User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
             {
-                <a asp-action="DeleteFile" asp-controller="Hosting" asp-route-fileId="@Model.File.Id" class="btn btn-outline-dark">Delete file</a>
+                <a asp-action="DeleteFile" asp-controller="Hosting" asp-route-fileId="@Model.File.Id" class="btn btn-outline-danger">Delete file</a>
             }
         }
     </div>

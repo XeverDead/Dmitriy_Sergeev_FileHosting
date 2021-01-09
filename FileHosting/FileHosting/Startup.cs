@@ -31,7 +31,7 @@ namespace Web
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/Account/Login");
-                    options.AccessDeniedPath = new PathString("/Account/Login");
+                    options.AccessDeniedPath = new PathString("/");
                 });
 
             services.AddTransient<IHostingCore, HostingCore>();

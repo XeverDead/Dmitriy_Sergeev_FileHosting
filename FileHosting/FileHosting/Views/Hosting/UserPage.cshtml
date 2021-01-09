@@ -35,7 +35,7 @@
             @{
                 if (User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
                 {
-                    <a asp-action="DeleteUser" asp-controller="Hosting" asp-route-userId="@Model.User.Id" class="btn btn-outline-dark">Delete user</a>
+                    <a asp-action="DeleteUser" asp-controller="Hosting" asp-route-userId="@Model.User.Id" class="btn btn-outline-danger">Delete user</a>
                 }
             }
 
