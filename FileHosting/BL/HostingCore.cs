@@ -10,9 +10,9 @@ namespace BL
     {
         private readonly IDbDataProvider _dbDataProvider;
 
-        public HostingCore()
+        public HostingCore(IDbDataProvider dbDataProvider)
         {
-            _dbDataProvider = new SqlServerDataProvider();
+            _dbDataProvider = dbDataProvider;
         }
 
         public void DeleteFile(long id)

@@ -1,43 +1,51 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "Home page";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model IEnumerable<Common.Models.User>
 
-<h2>Users:</h2>
-<br />
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<div class="container w-25 d-grid gap-3">
+    <h1 class="text-center">I do not know, what should be here. So just press some links and buttons on navigation.</h1>
+</div>
 
-<form asp-action="Register" asp-controller="Account" method="get">
-    <input type="submit" value="Register new user" />
-</form>
+@*<h2>Users:</h2>
+    <br />
 
-<form asp-action="UsersSearch" asp-controller="Hosting" method="get">
-    <input type="submit" value="Find user" />
-</form>
+    <form asp-action="Register" asp-controller="Account" method="get">
+        <input type="submit" value="Register new user" />
+    </form>
 
-<form asp-action="FilesSearch" asp-controller="Hosting" method="get">
-    <input type="submit" value="Find file" />
-</form>
+    <form asp-action="UsersSearch" asp-controller="Hosting" method="get">
+        <input type="submit" value="Find user" />
+    </form>
 
-<table class="table">
-    <tr>
-        <td>Id</td>
-        <td>Nickname</td>
-        <td>Role</td>
-        <td>Link</td>
-    </tr>
-    @{
-        foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Id</td>
-                <td>@user.Login</td>
-                <td>@user.RoleName</td>
-                <td>@Html.ActionLink("Userpage", "UserPage","Hosting", new { userId = user.Id })</td>
-            </tr>
+    <form asp-action="FilesSearch" asp-controller="Hosting" method="get">
+        <input type="submit" value="Find file" />
+    </form>
+
+    <table class="table">
+        <tr>
+            <td>Id</td>
+            <td>Nickname</td>
+            <td>Role</td>
+            <td>Link</td>
+        </tr>
+        @{
+            foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Login</td>
+                    <td>@user.RoleName</td>
+                    <td>@Html.ActionLink("Userpage", "UserPage","Hosting", new { userId = user.Id })</td>
+                </tr>
+            }
         }
-    }
-</table>
+    </table>*@
 

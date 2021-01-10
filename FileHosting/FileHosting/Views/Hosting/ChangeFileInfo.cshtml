@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = $"Change {Model.Name} info";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -8,39 +9,32 @@
 
 @model Web.ViewModels.FileInfoModel
 
-<h2>Change file info</h2>
-
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="ChangeFileInfo" asp-controller="Hosting" method="post">
-    <div class="validation" asp-validation-summary="ModelOnly"></div>
-    <div>
+    <div class="container w-25 d-grid gap-3">
+        <h1 class="text-center">Change file info</h1>
+        <div class="validation text-center" asp-validation-summary="ModelOnly"></div>
         <input type="hidden" asp-for="Id" value="@Model.Id" />
         <div class="form-group">
-            <label asp-for="Name">Name</label><br />
-            <input type="text" asp-for="Name" />
+            <label asp-for="Name" class="form-label">Name</label><br />
+            <input type="text" asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" />
         </div>
         <div class="form-group">
-            <label asp-for="Category">Category</label><br />
-            <input type="text" asp-for="Category" />
+            <label asp-for="Category" class="form-label">Category</label><br />
+            <input type="text" asp-for="Category" class="form-control" />
             <span asp-validation-for="Category" />
         </div>
         <div class="form-group">
-            <label asp-for="Description">Description</label><br />
-            <textarea asp-for="Description"></textarea>
+            <label asp-for="Description" class="form-label">Description</label><br />
+            <textarea asp-for="Description" class="form-control"></textarea>
             <span asp-validation-for="Description" />
         </div>
-        <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-outline-dark" />
+        <div class="form-group clearfix">
+            <input type="submit" value="Save" class="btn btn-outline-dark float-start" />
+            <a asp-action="FilePage" asp-controller="Hosting" asp-route-fileId="@Model.Id" class="btn btn-outline-dark float-end">Cancel</a>
         </div>
-    </div>
-</form>
-<form method="get" asp-action="FilePage" asp-controller="Hosting" asp-route-fileId="@Model.Id">
-    <div class="form-group">
-        <input type="hidden" value="@Model.Id" name="fileId" />
-        <input type="submit" value="Cancel" class="btn btn-outline-dark" />
-
-        <!-- Если оставить необходимый параметр в скрытом инпуте, то он передастся, а если
-            оставить его в тег хелпере, то он сгенерит нормальную ссылку
-            но при нажатии на кнопку просто не передаст параметр-->
     </div>
 </form>

@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "Sign up";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -9,32 +10,34 @@
 
 @model Web.ViewModels.RegisterModel
 
-<h2>Registration</h2>
-
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="Register" asp-controller="Account" method="post">
-    <div class="validation" asp-validation-summary="ModelOnly"></div>
-    <div>
+    <div class="container w-25 d-grid gap-3">
+        <h1 class="text-center">Registration</h1>
+        <div class="validation text-center" asp-validation-summary="ModelOnly"></div>
         <div class="form-group">
-            <label asp-for="Email">Email</label><br />
-            <input type="email" asp-for="Email" />
+            <label asp-for="Email" class="form-label">Email</label><br />
+            <input type="email" asp-for="Email" class="form-control" />
             <span asp-validation-for="Email"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Login">Login</label><br />
-            <input type="text" asp-for="Login" />
+            <label asp-for="Login" class="form-label">Login</label><br />
+            <input type="text" asp-for="Login" class="form-control" />
             <span asp-validation-for="Login"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Password">Password</label><br />
-            <input type="password" asp-for="Password" />
+            <label asp-for="Password" class="form-label">Password</label><br />
+            <input type="password" asp-for="Password" class="form-control" />
             <span asp-validation-for="Password"></span>
         </div>
         <div class="form-group">
-            <label asp-for="ConfirmPassword">Confirm Password</label><br />
-            <input type="password" asp-for="ConfirmPassword" />
+            <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label><br />
+            <input type="password" asp-for="ConfirmPassword" class="form-control" />
             <span asp-validation-for="ConfirmPassword"></span>
         </div>
-        <div class="form-group">
+        <div class="form-group text-center">
             <input type="submit" value="Register" class="btn btn-outline-dark" />
         </div>
     </div>

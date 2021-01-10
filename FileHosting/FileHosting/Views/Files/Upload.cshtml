@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["Title"] = "Upload";
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -8,29 +9,29 @@
 
 @model Web.ViewModels.FileLoadModel
 
-<h2>Upload</h2>
-
-<a href="/Hosting/Index">Back</a>
-
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
 <form asp-action="Upload" asp-controller="Files" asp-antiforgery="true" method="post" enctype="multipart/form-data">
-    <div class="validation" asp-validation-summary="ModelOnly"></div>
-    <div>
+    <div class="container w-25 d-grid gap-3">
+        <h1 class="text-center">Upload</h1>
+        <div class="validation text-center" asp-validation-summary="ModelOnly"></div>
         <div class="form-group">
-            <label asp-for="UploadedFile">File</label><br />
-            <input type="file" asp-for="UploadedFile" />
+            <label asp-for="UploadedFile" class="form-label">File</label><br />
+            <input type="file" asp-for="UploadedFile" class="form-control" />
             <span asp-validation-for="UploadedFile" />
         </div>
         <div class="form-group">
-            <label asp-for="Category">Category</label><br />
-            <input asp-for="Category" />
+            <label asp-for="Category" class="form-label">Category</label><br />
+            <input asp-for="Category" class="form-control"/>
             <span asp-validation-for="Category" />
         </div>
-        <p class="form-group">
-            <label asp-for="Description">Description</label><br />
-            <textarea asp-for="Description"></textarea>
-            <span asp-validation-for="Description" />
-        </p>
         <div class="form-group">
+            <label asp-for="Description" class="form-label">Description</label><br />
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" />
+        </div>
+        <div class="form-group text-center">
             <input type="submit" value="Upload" class="btn btn-outline-dark" />
         </div>
     </div>

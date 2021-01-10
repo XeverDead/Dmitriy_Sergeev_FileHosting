@@ -1,18 +1,49 @@
+USE master;
 CREATE DATABASE HostingDb;
-USE HostingDb;
-CREATE TABLE Users (
-Id BIGINT IDENTITY (1, 1) NOT NULL,
-Login NVARCHAR(50) NOT NULL,
-Password NVARCHAR(50) NOT NULL,
-Email NVARCHAR(100) NOT NULL,
-Role NVARCHAR(10) NOT NULL,
-CONSTRAINT PK_Users PRIMARY KEY(Id));
-CREATE TABLE Files (
-Id BIGINT IDENTITY (1, 1) NOT NULL,
-Name NVARCHAR(100) NOT NULL,
-AuthorId BIGINT NOT NULL,
-Description NVARCHAR(200) NULL,
-Category NVARCHAR(30) NULL,
-Link NVARCHAR(200) NOT NULL,
-CONSTRAINT PK_Files PRIMARY KEY(Id)
-CONSTRAINT FK_Files_Users FOREIGN KEY AuthorId REFERENCES Users(Id));
+GO
+USE HostingDb
+GO
+CREATE TABLE [dbo].[Users] (
+    [Id]       BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Login]    NVARCHAR (50)  NOT NULL,
+    [Password] NVARCHAR (50)  NOT NULL,
+    [Email]    NVARCHAR (100) NOT NULL,
+    [Role]     NVARCHAR (10)  NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+CREATE TABLE [dbo].[Files] (
+    [Id]          BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Name]        NVARCHAR (100) NOT NULL,
+    [Size]        BIGINT         NOT NULL,
+    [AuthorId]    BIGINT         NOT NULL,
+    [Description] NVARCHAR (200) NULL,
+    [Category]    NVARCHAR (30)  NULL,
+    [Link]        NVARCHAR (200) NOT NULL,
+    CONSTRAINT [PK_Files] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Files_Users] FOREIGN KEY ([AuthorId]) REFERENCES [dbo].[Users] ([Id])
+);
+GO
+CREATE PROCEDURE [dbo].[sp_InsertFile]
+	@name nvarchar(100),
+	@size bigint,
+	@authorId bigint,
+	@description nvarchar(200) = '',
+	@category nvarchar(30) = '',
+	@link nvarchar(200)
+AS
+	INSERT INTO Files (Name, Size, AuthorId, Description, Category, Link)
+	VALUES (@name, @size, @authorId, @description, @category, @link)
+GO
+CREATE PROCEDURE [dbo].[sp_InsertUser]
+	@login nvarchar(50),
+	@password nvarchar(50),
+	@email nvarchar(100),
+	@role nvarchar(10)
+AS
+	INSERT INTO Users (Login, Password, Email, Role)
+	VALUES (@login, @password, @email, @role)
+GO
+INSERT INTO Users (Login, Password, Email, Role)
+VALUES ('Admin', 'AdminPass', 'admin@admin.a', 'Admin')
+INSERT INTO Users (Login, Password, Email, Role)
+VALUES ('Editor', 'EditorPass', 'editor@editor.e', 'Editor')

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BL;
@@ -31,10 +32,11 @@ namespace Web
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/Account/Login");
-                    options.AccessDeniedPath = new PathString("/Account/Login");
+                    options.AccessDeniedPath = new PathString("/");
                 });
 
-            services.AddSingleton<IHostingCore, HostingCore>();
+            services.AddTransient<IHostingCore, HostingCore>();
+            services.AddTransient<IDbDataProvider, SqlServerDataProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,7 +46,11 @@ namespace Web
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseStaticFiles();
+            if (string.IsNullOrWhiteSpace(env.WebRootPath))
+            {
+                env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+
             app.UseRouting();
 
             app.UseAuthentication();
