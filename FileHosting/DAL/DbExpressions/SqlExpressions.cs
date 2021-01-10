@@ -1,7 +1,5 @@
 ﻿namespace DAL.DbExpressions
 {
-    //Сделать этот класс статическим не очень можно, так как класс провайдера должен содержать
-    //переменную типа интерфейса этого класса для того, что бы BLL мог запросы отправлять в провайдер.
     public class SqlExpressions : IDbExpressions
     {
         public string GetAllUsers => "SELECT * FROM Users";

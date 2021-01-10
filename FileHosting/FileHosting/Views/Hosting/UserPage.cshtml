@@ -35,7 +35,10 @@
             @{
                 if (User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Common.Enums.Roles.Admin.ToString()))
                 {
-                    <a asp-action="DeleteUser" asp-controller="Hosting" asp-route-userId="@Model.User.Id" class="btn btn-outline-danger">Delete user</a>
+                    <form asp-action="DeleteUser" asp-controller="Hosting" method="post">
+                        <input type="hidden" name="userId" value="@Model.User.Id" />
+                        <input type="submit" class="btn btn-outline-danger" value="Delete user" />
+                    </form>
                 }
             }
 
@@ -54,6 +57,7 @@
             <thead>
                 <tr>
                     <th scope="col">Name</th>
+                    <th scope="col">Size(bytes)</th>
                     <th scope="col">Category</th>
                     <th scope="col">Link</th>
                 </tr>
@@ -63,6 +67,7 @@
                 {
                     <tr>
                         <td>@file.Name</td>
+                        <td>@file.Size</td>
                         <td>@file.Category</td>
                         <td>@Html.ActionLink("File page", "FilePage", "Hosting", new { fileId = file.Id })</td>
                     </tr>
