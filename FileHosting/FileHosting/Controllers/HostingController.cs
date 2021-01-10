@@ -1,22 +1,12 @@
 ﻿using Common.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
 using Common.Enums;
-using DAL.Enums;
-using DAL.DbExpressions;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using BL;
 using Web.ViewModels;
@@ -47,7 +37,7 @@ namespace Web.Controllers
         {
             User user;
 
-            if (userId == -1)
+            if (userId == 0)
             {
                 user = _hostingCore.GetUserByEmail(User.Identity.Name);
             }
@@ -58,7 +48,7 @@ namespace Web.Controllers
 
             if (user == null)
             {
-                return Content("There is no user with this id");
+                return NotFound();
             }
 
             var userFiles = new UserFilesModel
@@ -73,11 +63,11 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult FilePage(long fileId)
         {
-            var file = _hostingCore.GetFileById(fileId);
+            HostingFile file = _hostingCore.GetFileById(fileId);
 
             if (file == null)
             {
-                return Content("There is no file with this id");
+                return NotFound();
             }
 
             var userFileInfo = new UserFileModel
@@ -146,7 +136,12 @@ namespace Web.Controllers
         [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]
         public IActionResult ChangeUserInfo(long userId)
         {
-            var user = _hostingCore.GetUserById(userId);
+            User user = _hostingCore.GetUserById(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             if (User.Identity.Name == user.Email ||
                 User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Admin.ToString()) ||
@@ -171,7 +166,7 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _hostingCore.GetUserById(userInfo.Id);
+                User user = _hostingCore.GetUserById(userInfo.Id);
 
                 if (User.Identity.Name == user.Email ||
                     User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Admin.ToString()) ||
@@ -193,8 +188,14 @@ namespace Web.Controllers
         [RoleAuthorize(Roles.User, Roles.Editor, Roles.Admin)]
         public IActionResult ChangeFileInfo(long fileId)
         {
-            var file = _hostingCore.GetFileById(fileId);
-            var user = _hostingCore.GetUserById(file.AuthorId);
+            HostingFile file = _hostingCore.GetFileById(fileId);
+
+            if (file == null)
+            {
+                return NotFound();
+            }
+
+            User user = _hostingCore.GetUserById(file.AuthorId);
 
             if (User.Identity.Name == user.Email ||
                 User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Admin.ToString()) ||
@@ -220,14 +221,14 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var file = _hostingCore.GetFileById(fileInfo.Id);
-                var user = _hostingCore.GetUserById(file.AuthorId);
+                HostingFile file = _hostingCore.GetFileById(fileInfo.Id);
+                User user = _hostingCore.GetUserById(file.AuthorId);
 
                 if (User.Identity.Name == user.Email ||
                     User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Admin.ToString()) ||
                     User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Editor.ToString()))
                 {
-                    var userFiles = _hostingCore.GetUserFiles(file.AuthorId);
+                    IEnumerable<HostingFile> userFiles = _hostingCore.GetUserFiles(file.AuthorId);
 
                     var selectedFiles = from userFile in userFiles
                                         where userFile.Name == fileInfo.Name &&
@@ -254,12 +255,13 @@ namespace Web.Controllers
             return View(fileInfo);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public IActionResult DeleteFile(long fileId)
         {
-            var file = _hostingCore.GetFileById(fileId);
-            var user = _hostingCore.GetUserById(file.AuthorId);
+            HostingFile file = _hostingCore.GetFileById(fileId);
+
+            User user = _hostingCore.GetUserById(file.AuthorId);
 
             if (User.Identity.Name == user.Email || 
                 User.HasClaim(ClaimsIdentity.DefaultRoleClaimType, Roles.Admin.ToString()))
@@ -271,13 +273,13 @@ namespace Web.Controllers
             return RedirectToAction("UserPage", new { userId = file.AuthorId});
         }
 
-        [HttpGet]
+        [HttpPost]
         [RoleAuthorize(Roles.Admin)]
         public IActionResult DeleteUser(long userId)
         {
-            var user = _hostingCore.GetUserById(userId);
+            User user = _hostingCore.GetUserById(userId);
 
-            var files = _hostingCore.GetUserFiles(userId);
+            IEnumerable<HostingFile> files = _hostingCore.GetUserFiles(userId);
 
             foreach (var file in files)
             {
@@ -286,6 +288,11 @@ namespace Web.Controllers
             }
 
             _hostingCore.DeleteUser(user.Id);
+
+            if (user.Email == User.Identity.Name)
+            {
+                return RedirectToAction("Logout", "Account");
+            }
 
             return RedirectToAction("Index");
         }

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using BL;
 using DAL.DataProviders;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,7 +31,7 @@ namespace Web
                 });
 
             services.AddTransient<IHostingCore, HostingCore>();
-            services.AddTransient<IDbDataProvider, SqlServerDataProvider>();
+            services.AddTransient<IDbDataProvider>(s => new SqlServerDataProvider(Configuration.GetConnectionString("SqlServerConnection")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

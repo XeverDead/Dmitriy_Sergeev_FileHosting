@@ -18,6 +18,7 @@
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Name</th>
+                <th scope="col">Size(bytes)</th>
                 <th scope="col">Category</th>
                 <th scope="col">Author link</th>
                 <th scope="col">File link</th>
@@ -29,6 +30,7 @@
                 <tr>
                     <td>@file.Id</td>
                     <td>@file.Name</td>
+                    <td>@file.Size</td>
                     <td>@file.Category</td>
                     <td>@Html.ActionLink("Userpage", "UserPage", "Hosting", new { userId = file.AuthorId })</td>
                     <td>@Html.ActionLink("Filepage", "FilePage", "Hosting", new { fileId = file.Id })</td>

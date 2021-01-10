@@ -37,7 +37,7 @@ namespace BL
 
         public HostingFile GetFileById(long id)
         {
-            var files = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFileById(id), Tables.Files).Cast<HostingFile>();
+            IEnumerable<HostingFile> files = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetFileById(id), Tables.Files).Cast<HostingFile>();
 
             return files.FirstOrDefault();
         }
@@ -59,14 +59,14 @@ namespace BL
 
         public User GetUserByEmail(string email)
         {
-            var users = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserByEmail(email), Tables.Users).Cast<User>();
+            IEnumerable<User> users = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserByEmail(email), Tables.Users).Cast<User>();
 
             return users.FirstOrDefault();
         }
 
         public User GetUserById(long id)
         {
-            var users = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserById(id), Tables.Users).Cast<User>();
+            IEnumerable<User> users = _dbDataProvider.ExecuteQuery(_dbDataProvider.Expressions.GetUserById(id), Tables.Users).Cast<User>();
 
             return users.FirstOrDefault();
         }

@@ -1,24 +1,12 @@
 ﻿using Common.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
 using Common.Enums;
-using DAL.Enums;
-using DAL.DbExpressions;
 using Web.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using BL;
 
 
@@ -44,7 +32,7 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _hostingCore.GetUserByEmail(loginModel.Email);
+                User user = _hostingCore.GetUserByEmail(loginModel.Email);
 
                 if (user != null)
                 {
@@ -77,7 +65,7 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _hostingCore.GetUserByEmail(registerModel.Email);
+                User user = _hostingCore.GetUserByEmail(registerModel.Email);
 
                 if (user == null)
                 {
@@ -118,7 +106,7 @@ namespace Web.Controllers
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.RoleName)
             };
 
-            ClaimsIdentity claimId = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            var claimId = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
         }

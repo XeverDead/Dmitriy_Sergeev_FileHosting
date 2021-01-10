@@ -1,25 +1,14 @@
 ﻿using Common.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
 using Common.Enums;
-using DAL.Enums;
-using DAL.DbExpressions;
 using Web.ViewModels;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using BL;
+using Microsoft.AspNetCore.Http;
 
 namespace Web.Controllers
 {
@@ -35,9 +24,14 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public VirtualFileResult Download(long fileId)
+        public IActionResult Download(long fileId)
         {
-            var file = _hostingCore.GetFileById(fileId);
+            HostingFile file = _hostingCore.GetFileById(fileId);
+
+            if (file == null)
+            {
+                return NotFound();
+            }
 
             return File(Path.Combine("~", file.Link), "application/octet-stream", file.Name);
         }
@@ -55,9 +49,9 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             { 
-            var uploadedFile = loadModel.UploadedFile;
+            IFormFile uploadedFile = loadModel.UploadedFile;
 
-            var user = _hostingCore.GetUserByEmail(User.Identity.Name);
+            User user = _hostingCore.GetUserByEmail(User.Identity.Name);
 
                 if (user != null && uploadedFile != null)
                 {
