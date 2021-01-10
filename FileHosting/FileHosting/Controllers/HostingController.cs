@@ -289,6 +289,11 @@ namespace Web.Controllers
 
             _hostingCore.DeleteUser(user.Id);
 
+            if (user.Email == User.Identity.Name)
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+
             return RedirectToAction("Index");
         }
 
